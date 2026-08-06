@@ -47,7 +47,7 @@ in {
       type = lib.types.attrs;
       readOnly = true;
       description = "An auto-generated attrset mapping server names to their local proxy HTTP URLs. Designed to be passed to programs.mcp.servers.";
-    }
+    };
   };
 
   config = lib.mkIf cfg.enable {
