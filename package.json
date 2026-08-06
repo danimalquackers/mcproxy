@@ -1,0 +1,17 @@
+{
+  "name": "mcproxy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@types/express": "^5.0.6",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1"
+  }
+}

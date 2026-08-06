@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MCProxy Status</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            padding: 2rem;
+            background: #f9fafb;
+            color: #111827;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        th,
+        td {
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #f3f4f6;
+        }
+
+        .status-running {
+            color: #059669;
+            font-weight: bold;
+        }
+
+        .status-error {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .status-starting {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 6px 12px;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>MCProxy Fleet Status</h1>
+    <table>
+        <tr>
+            <th>Server ID</th>
+            <th>Transport</th>
+            <th>Status</th>
+            <th>Error Details</th>
+            <th>Action</th>
+        </tr>
+        <% for (const [serverId, serverConfig] of Object.entries(config.mcpServers)) { %>
+            <% const state=serverStates.get(serverId); %>
+                <% if (!state) continue; %>
+                    <tr>
+                        <td>
+                            <%= serverId %>
+                        </td>
+                        <td>
+                            <%= serverConfig.transport || "stdio" %>
+                        </td>
+                        <td class="status-<%= state.status %>">
+                            <%= state.status.toUpperCase() %>
+                        </td>
+                        <td>
+                            <pre style="margin:0; max-width:400px; overflow-x:auto;"><%= state.errorMsg || "" %></pre>
+                        </td>
+                        <td>
+                            <form method="POST" action="/servers/<%= serverId %>/restart" style="margin:0;">
+                                <button type="submit">Restart</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% } %>
+    </table>
+
+    <script>
+        // Auto-refresh every 5 seconds while tab is focused
+        const REFRESH_INTERVAL = 5000;
+        let interval;
+
+        const startRefresh = () => {
+            if (interval) clearInterval(interval);
+            interval = setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    window.location.reload();
+                }
+            }, REFRESH_INTERVAL);
+        };
+
+        startRefresh();
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                startRefresh();
+            } else {
+                if (interval) clearInterval(interval);
+            }
+        });
+    </script>
+</body>
+
+</html>
