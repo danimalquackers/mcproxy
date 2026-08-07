@@ -5,7 +5,9 @@ let
   jsonFormat = pkgs.formats.json {};
 
   # Generated config file passed to the server
-  configFile = jsonFormat.generate "mcpServers.json" cfg.servers;
+  configFile = jsonFormat.generate "mcpServers.json" {
+    mcpServers = cfg.servers;
+  };
 
   # Produce a Nix attrset to provide to programs.mcp
   computedMcpServers = {
