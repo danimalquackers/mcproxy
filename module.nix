@@ -34,10 +34,62 @@ in {
     };
 
     servers = lib.mkOption {
-      type = jsonFormat.type;
+      type = lib.types.attrsOf (lib.types.submodule ({ name, config, ... }: {
+        options = {
+          transport = lib.mkOption {
+            type = lib.types.enum [ "stdio" "sse" "streamable-http" ];
+            default = "stdio";
+            description = "The transport type for the MCP server.";
+          };
+
+          command = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            description = "The command to run for stdio transport.";
+          };
+
+          args = lib.mkOption {
+            type = lib.types.nullOr (lib.types.listOf lib.types.str);
+            default = null;
+            description = "Arguments to pass to the command.";
+          };
+
+          env = lib.mkOption {
+            type = lib.types.nullOr (lib.types.attrsOf lib.types.str);
+            default = null;
+            description = "Environment variables to set for the command.";
+          };
+
+          url = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            description = "The URL for sse or streamable-http transport.";
+          };
+
+          headers = lib.mkOption {
+            type = lib.types.nullOr (lib.types.attrsOf lib.types.str);
+            default = null;
+            description = "Headers to set for the connection.";
+          };
+        };
+
+        config = {
+          assertions = [
+            {
+              assertion = config.transport == "stdio" -> config.command != null;
+              message = "MCP server ${name} has transport set to stdio but no command is provided";
+            }
+            {
+              assertion = config.transport == "sse" || config.transport == "streamable-http" -> config.url != null;
+              message = "MCP server ${name} has transport set to ${config.transport} but no url is provided";
+            }
+          ];
+        };
+      }));
       default = {};
       example = {
         filesystem = {
+          type = "stdio";
           command = "npx";
           args = [ "-y" "@modelcontextprotocol/server-filesystem" "/home/user/projects" ];
         };
