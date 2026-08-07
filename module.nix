@@ -72,19 +72,6 @@ in {
             description = "Headers to set for the connection.";
           };
         };
-
-        config = {
-          assertions = [
-            {
-              assertion = config.transport == "stdio" -> config.command != null;
-              message = "MCP server ${name} has transport set to stdio but no command is provided";
-            }
-            {
-              assertion = config.transport == "sse" || config.transport == "streamable-http" -> config.url != null;
-              message = "MCP server ${name} has transport set to ${config.transport} but no url is provided";
-            }
-          ];
-        };
       }));
       default = {};
       example = {
@@ -105,6 +92,17 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = lib.flatten(builtins.mapAttrsToList (name: server: [
+      {
+        assertion = server.transport == "stdio" -> server.command != null;
+        message = "MCP server ${name} has transport set to stdio but no command is provided";
+      }
+      {
+        assertion = server.transport == "sse" || server.transport == "streamable-http" -> server.url != null;
+        message = "MCP server ${name} has transport set to ${server.transport} but no url is provided";
+      }
+    ] cfg.servers))
+
     services.mcproxy.proxyServers = computedMcpServers;
 
     # Create the user-level systemd service
