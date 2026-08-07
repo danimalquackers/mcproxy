@@ -8,8 +8,10 @@
   },
   "type": "module",
   "scripts": {
+    "clean": "rimraf dist/",
     "dev": "tsx index.ts",
-    "build": "tsc --outDir dist",
+    "copy-files": "copyfiles src/views/**/*.ejs dist/",
+    "build": "npm run clean && tsc --outDir dist && npm run copy-files",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -17,7 +19,9 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@types/express": "^5.0.6",
+    "copyfiles": "^2.4.1",
     "ejs": "^6.0.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "rimraf": "^6.1.3"
   }
 }
