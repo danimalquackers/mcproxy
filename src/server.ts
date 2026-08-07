@@ -25,7 +25,7 @@ export async function startApp(): Promise<void> {
 
     // Set up EJS templating engine views path
     app.set("view engine", "ejs");
-    app.set("views", path.join(__dirname, "views"));
+    app.set("views", path.join(import.meta.dirname, "views"));
 
     // 2. Initialize Backend Servers
     for (const [serverId, serverConfig] of Object.entries(config.mcpServers)) {
