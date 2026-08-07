@@ -92,7 +92,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = lib.flatten(builtins.mapAttrsToList (name: server: [
+    assertions = lib.flatten(lib.mapAttrsToList (name: server: [
       {
         assertion = server.transport == "stdio" -> server.command != null;
         message = "MCP server ${name} has transport set to stdio but no command is provided";
