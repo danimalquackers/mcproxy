@@ -19,9 +19,10 @@
             pname = "mcproxy";
             version = "0.0.1";
 
-            src = ./.;
+            nativeBuildInputs = [ pkgs.nodejs_22 pkgs.typescript pkgs.tsx ];
 
-            npmDepsHash = pkgs.lib.fakeHash; 
+            src = ./.;
+            npmDepsHash = "sha256-byX5xuUzxci8WixBB/xWFZEJiYNAnW22hCF9dmdvaPk=";
           };
           default = self.packages.${system}.mcproxy;
         }

@@ -1,5 +1,5 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { StdioClientTransport, type StdioServerParameters } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -8,9 +8,9 @@ import {
     ListToolsResultSchema,
     CallToolRequestSchema,
     CallToolResultSchema,
-    Tool
+    type Tool
 } from "@modelcontextprotocol/sdk/types.js";
-import { ServerConfig, ServerState } from "./types.js";
+import { type ServerConfig, type ServerState } from "./types.js";
 
 export const serverStates = new Map<string, ServerState>();
 export const globalSchemaCache = new Map<string, Tool[]>();
@@ -46,18 +46,26 @@ export async function initServer(serverId: string, serverConfig: ServerConfig): 
                     command: serverConfig.command,
                     args: serverConfig.args,
                     env: { ...sanitizedProcessEnv, ...serverConfig.env }
-                });
+                } as StdioServerParameters);
                 break;
             }
             case "sse": {
                 if (!serverConfig.url) throw new Error(`Missing 'url' for sse transport.`);
-                clientTransport = new SSEClientTransport(new URL(serverConfig.url), { headers: resolvedHeaders });
+                clientTransport = new SSEClientTransport(new URL(serverConfig.url), {
+                    requestInit: {
+                        headers: resolvedHeaders
+                    }
+                });
                 break;
             }
             case "streamable-http": {
                 if (!serverConfig.url) throw new Error(`Missing 'url' for streamable-http transport.`);
 
-                clientTransport = new StreamableHTTPClientTransport(new URL(serverConfig.url), { headers: resolvedHeaders });
+                clientTransport = new StreamableHTTPClientTransport(new URL(serverConfig.url), {
+                    requestInit: {
+                        headers: resolvedHeaders
+                    }
+                });
                 break;
             }
             default:

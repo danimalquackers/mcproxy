@@ -2,8 +2,9 @@ import express from "express";
 import fs from "fs";
 import path from "path";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { Config } from "./types.js";
+import { type Config } from "./types.js";
 import { serverStates, initServer, createMasterServer } from "./backend.js";
+import type { Transport } from "@modelcontextprotocol/sdk/shared/transport";
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 11262;
 const CONFIG_PATH: string = process.env.CONFIG_PATH || "./mcpServers.json";
@@ -90,9 +91,10 @@ export async function startApp(): Promise<void> {
         }
 
         try {
-            const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+            const transport = new StreamableHTTPServerTransport();
             res.on("close", () => transport.close());
-            await state.proxyServer.connect(transport);
+
+            await state.proxyServer.connect(transport as Transport);
             await transport.handleRequest(req, res);
         } catch (error) {
             console.error(`[!] Streamable HTTP error on ${serverId}:`, error);
@@ -106,9 +108,10 @@ export async function startApp(): Promise<void> {
 
     app.post(`/mcp`, async (req, res) => {
         try {
-            const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+            const transport = new StreamableHTTPServerTransport();
             res.on("close", () => transport.close());
-            await masterServer.connect(transport);
+
+            await masterServer.connect(transport as Transport);
             await transport.handleRequest(req, res);
         } catch (error) {
             console.error(`[!] Streamable HTTP error on Master Server:`, error);
