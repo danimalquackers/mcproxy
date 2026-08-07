@@ -101,7 +101,7 @@ in {
         assertion = server.transport == "sse" || server.transport == "streamable-http" -> server.url != null;
         message = "MCP server ${name} has transport set to ${server.transport} but no url is provided";
       }
-    ] cfg.servers))
+    ] cfg.servers));
 
     services.mcproxy.proxyServers = computedMcpServers;
 
