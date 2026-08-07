@@ -2,6 +2,8 @@
 
 MCProxy is an MCP server proxy designed to reduce Model Context Protocol (MCP) context window bloat while preserving LLM client permissions. It strips heavy metadata and JSON schemas from backend tool definitions during the discovery phase, forcing LLM clients to fetch full schemas dynamically on-demand via a deduplicated Master Server.
 
+> Disclosure: This project contains code generated mostly by Gemini, with human editing. It is not intended to be production-ready and is not feature-complete and compatible with all scenarios.
+
 ## Features
 
 * **Context Compression:** Strips heavy descriptions, nested properties, and large enums from backend tools, reducing token overhead significantly while preserving client-side policies and call-time permissions.
